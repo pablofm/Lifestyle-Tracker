@@ -1,0 +1,42 @@
+<div data-bb-type="screen" data-bb-effect="slide-left">
+	<div id="valueID" style="display:none" ></div>
+	<div data-bb-type="round-panel">
+		<div data-bb-type="panel-header">Details</div>
+		<p>Value: <span id="value"></span></p>
+		<p>Date: <span id="date"></span><input type="hidden" id="datejs"/></p>
+		<p>Tracker: <span id="track"></span></p>
+		<p>Tracker type: <span id="trackType"></span></p>
+	</div>
+	<div data-bb-type="action-bar" data-bb-back-caption="My tracker">
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_edit.png" onclick="editValue()">Edit this value</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_delete.png" onclick="callRemoveValue()">Remove this value</div>	
+	</div>	
+</div>
+
+<!-- SCRIPTS SECTION -->
+
+<script type="text/javascript">
+	function showValue(valueID, value, valueDate, trackName, trackType){
+		document.getElementById('valueID').innerHTML = valueID;
+		document.getElementById('track').innerHTML = trackName;
+		document.getElementById('datejs').value = valueDate;
+		document.getElementById('date').innerHTML = moment(valueDate).format(localStorage.getItem('dateFormat'));
+		document.getElementById('value').innerHTML = value;
+		document.getElementById('trackType').innerHTML = trackType;
+		document.getElementById('')
+	}
+
+	function editValue(){
+		var valueID = document.getElementById('valueID').innerText;
+		var valueDate = document.getElementById('datejs').value;
+		var value = document.getElementById('value').innerText;
+		var track = document.getElementById('track').innerText;
+		var trackType = document.getElementById('trackType').innerText;
+		bb.pushScreen('data_new.html', 'editData', {'valueID': valueID, 'valueDate': valueDate, 'valueValue': value, 'track': track, 'trackType': trackType});
+	}
+
+	function callRemoveValue(){
+		var valueID = document.getElementById('valueID').innerText;
+		removeValue(valueID,true);
+	}
+</script>

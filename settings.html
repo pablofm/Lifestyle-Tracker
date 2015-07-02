@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<div data-bb-type="screen" data-bb-effect="slide-left">
+	<div data-bb-type="round-panel">
+		<div data-bb-type="panel-header">Settings</div>
+		<select id="dateFormat" data-bb-label="Date Format">
+			<option value="DD/MM/YYYY HH:mm">26/10/2013 21:00</option>
+			<option value="MM/DD/YYYY HH:mm">10/26/2013 21:00</option>
+			<option value="YYYY/MM/DD HH:mm">2013/10/26 21:00</option>
+
+		</select>
+	</div>
+	<div data-bb-type="action-bar" data-bb-back-caption="My trackers">
+		<div data-bb-type="action" data-bb-style="button" data-bb-img="static/images/ic_save.png" onclick="saveSettings()">Save settings</div>
+	</div>	
+</div>
+
+<script type="text/javascript">
+	function saveSettings(){
+		var date = document.getElementById('dateFormat').value;
+		localStorage.setItem('dateFormat',date);
+		blackberry.ui.dialog.standardAskAsync("Settings correctly saved!", blackberry.ui.dialog.D_OK,{}, {title:"Settings modified"});
+		bb.popScreen();
+	}
+</script>

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<div data-bb-type="screen" id="screen">
+	<div id="list" data-bb-type="image-list" data-bb-header-justify="left" data-bb-style="removebuttons" data-bb-images="none" data-role="listview" >
+		<div data-bb-type="header" id="list">Your Values</div>
+	</div>
+	<div data-bb-type="action-bar" data-bb-back-caption="My trackers"></div>	
+</div>
+
+<script type="text/javascript">
+	function appendValuesToBeRemoved(trackID){
+		var values = Value.all().filter("track", '=' , trackID).order("date", true);
+		values.list(null, 
+			function (results) {
+				if(results.length > 0){
+					results.forEach(
+						function (r){
+							var item = document.createElement('div');
+							item.setAttribute('id', r.id);
+							item.setAttribute('data-bb-type','item');
+							item.setAttribute('data-bb-title',r.value);
+							item.innerHTML = "Date: "+ moment(r.date).format(localStorage.getItem("dateFormat"));
+							item.setAttribute('onbtnclick', 'removeValue("'+r.id+'",false);'); 
+							document.getElementById('list').appendItem(item);
+						}
+					);
+				}
+				else{
+					var item = document.createElement('div');
+					item.setAttribute('data-bb-type','label');		
+					item.innerHTML = "No values to remove!";
+					document.getElementById('list').appendItem(item);
+				}
+			}
+		);
+	}
+
+
+	function hideValueAfterRemove(valueID){
+		var list = document.getElementById('list');
+		var div = document.getElementById(valueID);
+		list.removeChild(div);
+		list.refresh();
+	}
+</script>

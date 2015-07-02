@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<div data-bb-type="screen" data-bb-effect="slide-left">
+	<div id="valueID" style="display:none" ></div>
+	<div id="trackType" style="display:none" ></div>
+	<div data-bb-type="round-panel">
+		<div id="header" data-bb-type="panel-header">Add new data</div>
+		<select id="tracks" data-bb-label="Track" onchange="changeForm()">
+			<option value="None">Choose one tracker...</option>
+		</select> 
+		<div data-bb-type="label">Date</div>
+		<input id="date" type="datetime-local"/>
+		<div data-bb-type="label" value="">Value</div>
+		<div id="valueContainer"></div>
+	</div>
+	
+	<div data-bb-type="action-bar"  data-bb-back-caption="My trackers">
+		<div data-bb-type="action" data-bb-style="button" data-bb-img="static/images/ic_save.png" onclick="launchStoreData()">Save</div>
+	</div>	
+</div>
+
+<!-- SCRIPTS SECTION -->
+
+<script type="text/javascript">
+
+	function launchStoreData(){
+		var valueID = document.getElementById('valueID').innerText;
+		var trackName = document.getElementById('tracks').value;
+		var trackType = document.getElementById('trackType').innerHTML;
+		var date = new Date();
+		var value;
+
+		var date_time = document.getElementById('date').value.split("T");
+		var date_provided = date_time[0].split("-");
+		var time_provided = date_time[1].split(":");
+
+		var day = date_provided[2];
+		var month = date_provided[1];
+		var year = date_provided[0];
+		var hour = time_provided[0];
+		var minutes = time_provided[1];
+
+		date.setFullYear(year);
+		date.setMonth(month-1); // MONTHS STARTS IN 0
+		date.setDate(day);
+		date.setHours(hour);
+		date.setMinutes(minutes);
+
+		if(trackType=="Yes/No"){
+			value = document.getElementById('value').getChecked();
+			if(value){
+				value="Yes";
+			}
+			else{
+				value="No";
+			}			
+		}
+		else{// Number
+			if(document.getElementById('value') == null){
+				value = null;
+			}
+			else{
+				value = document.getElementById('value').value;		
+			}
+		}
+		storeData(trackName,value,date,valueID);
+	}
+
+	// Add the predefined track when adding values.
+	// Populate the select track tag
+	function addTrack(trackName){
+		var tracks = Track.all();
+		var option;
+		tracks.list(null, function (results) {
+			results.forEach(function (r) {
+				option = document.createElement('option');
+				option.setAttribute('value',r.id);
+				option.setAttribute('id',r.type);
+				option.innerHTML = r.name;
+				if(trackName == r.name){
+					option.setAttribute('selected',true);
+				}
+				document.getElementById('tracks').add(option);
+
+			});
+			document.getElementById('tracks').refresh();
+		});
+	}
+
+	function addValueCustomForm(trackType){
+		document.getElementById('valueContainer').innerHTML = "";
+		document.getElementById('trackType').innerHTML = trackType;
+		if(trackType == "Number"){
+			var newInput = document.createElement('input');
+			newInput.setAttribute('id','value');
+			newInput.setAttribute('type','number');
+			newInput.setAttribute('step', 'any');
+			newInput = bb.textInput.style(newInput);
+			document.getElementById('valueContainer').appendChild(newInput);
+
+			// LOWER VERSIONS
+
+			// var newInput = document.createElement('input');
+			// newInput.setAttribute('id','value');
+			// newInput.setAttribute('type','text');
+			// newInput = bb.textInput.style(newInput);
+			// document.getElementById('valueContainer').appendChild(newInput);
+			// var p = document.createElement('p');
+			// p.innerHTML = "Sorry: We can't force the keyboard layout to be numeric because of a blackberry bug. We'll activate it as soon as blackberry corrects the issue.";
+			// document.getElementById('valueContainer').appendChild(p);
+		}
+
+		if(trackType == "Yes/No"){
+			// It isn't an input.
+			var newInput = document.createElement('div');
+			newInput.setAttribute('id','value');
+			newInput.setAttribute('data-bb-type','toggle');
+			newInput.setAttribute('data-bb-checked',true);
+			newInput.setAttribute('data-bb-on','Yes');
+			newInput.setAttribute('data-bb-off','No');
+			newInput = bb.toggle.style(newInput);
+			document.getElementById('valueContainer').appendChild(newInput);
+		}
+	}
+
+	function changeForm(){
+		var select = document.getElementById('tracks');
+		var selected = select.options[select.selectedIndex].id;
+		addValueCustomForm(selected);
+	}
+
+	function editInformationValue(valueID, valueDate, valueValue,track, trackType){
+		addTrack(track);
+		addValueCustomForm(trackType);
+		document.getElementById('header').innerHTML = "Editing value of track "+ track ;
+		document.getElementById('tracks').disable();
+		document.getElementById('value').value = valueValue;
+		document.getElementById('valueID').innerHTML = valueID;
+		document.getElementById('date').removeAttribute('disabled');
+		preloadDateTime(valueDate);
+	}
+
+	function preloadDateTime(date){
+		// OBJECTIVE = 1996-12-19T16:39:57
+		document.getElementById('date').value = moment(date).format("YYYY-MM-DDTHH:mm");
+	}
+</script>

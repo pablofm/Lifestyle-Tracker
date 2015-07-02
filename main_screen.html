@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<div data-bb-type="screen">
+	<div data-bb-type="image-list" data-bb-header-justify="left" data-bb-style="addbuttons" data-bb-images="none" data-role="listview" >
+		<div data-bb-type="header">Actions</div>
+		<div data-bb-type="item" onbtnclick="bb.pushScreen('track_new.html', 'newTrack');" onclick="bb.pushScreen('track_new.html', 'newTrack');" data-bb-title="Add tracker">Tap here to add a new tracker</div>
+	</div>
+	<div id="list" data-bb-type="image-list" data-bb-header-justify="left" data-bb-style="arrowlist" data-bb-images="none" data-role="listview" >
+		<div data-bb-type="header" id="list">Your Trackers</div>
+	</div>
+	<div data-bb-type="menu">
+		<div data-bb-type="menu-item" data-bb-img="static/images/ic_settings.png" data-bb-pin="right" onclick="bb.pushScreen('settings.html', 'settings')">Settings</div>
+		<div data-bb-type="menu-item" data-bb-img="static/images/ic_help.png" data-bb-pin="left" onclick="bb.pushScreen('about.html', 'about');">About</div>
+	</div>
+	<div data-bb-type="action-bar">
+		<div data-bb-type="action" data-bb-style="button" data-bb-img="static/images/ic_add.png" onclick="checkNewData()">Add data</div>
+		<div onclick="bbm.inviteToDownload();" id="btnB" data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_bbm.png">Invite To Download</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_delete.png" onclick="callRemoveMultipleTracks()">Remove trackers</div>
+	</div>	
+</div>
+
+<!-- SCRIPTS SECTION -->
+
+<script type="text/javascript">
+	function checkNewData(){
+		Track.all().count(
+			function f(x){
+				if(x==0){
+					blackberry.ui.dialog.standardAskAsync("You must add a tracker first!", blackberry.ui.dialog.D_OK,{}, {title:"No tracker found"});
+				}
+				else{
+					bb.pushScreen('data_new.html', 'newData',{});			
+				}
+			}
+		);
+	}
+	function appendTracks(){
+		var tracks = Track.all().order('name',true);
+		tracks.list(null, 
+			function (results) {
+				if(results.length > 0){
+					results.forEach(
+						function (r) {
+							var item = document.createElement('div');
+							item.setAttribute('id', r.id);
+							item.setAttribute('data-bb-type','item');
+							item.setAttribute('data-bb-title',r.name);
+							item.innerHTML = "Tracker type: "+r.type;
+							item.onclick = function() {bb.pushScreen('track.html', 'track',{'trackID': r.id, 'trackName': r.name, 'trackType': r.type});};
+							document.getElementById('list').appendItem(item);
+						}
+					);
+				}
+				else{
+					var item = document.createElement('div');
+					item.setAttribute('data-bb-type','label');		
+					item.innerHTML = "No trackers added...yet!";
+					document.getElementById('list').appendItem(item);
+				}
+			}
+		);
+	}
+	function callRemoveMultipleTracks(){
+		bb.pushScreen('tracks_delete.html', 'deleteTracks', {});
+	}  
+
+	function graphic(){
+		bb.pushScreen('graphic.html', 'graphic', {});
+	}
+</script>
+

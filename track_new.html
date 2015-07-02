@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<div data-bb-type="screen" data-bb-effect="slide-left">
+	<div id="trackID" style="display:none" ></div>
+	<div data-bb-type="round-panel">
+		<div id="header" data-bb-type="panel-header">Add new tracker</div>
+		<div data-bb-type="label">Name</div>
+		<input id="trackName" type="text" placeholder="Enter Text Here"/>
+		<select id="trackType" data-bb-label="Data Type">
+			<option value="Number">Number</option>
+			<option value="Yes/No">Yes/No</option>
+			<option selected value="None">Choose...</option>
+		</select>
+	</div>
+	<div data-bb-type="action-bar" data-bb-back-caption="My trackers">	
+		<div data-bb-type="action" data-bb-style="button" data-bb-img="static/images/ic_save.png" onclick="launchStoreTrack()">Save</div>
+	</div>	
+</div>
+
+<!-- SCRIPTS SECTION -->
+
+<script type="text/javascript">
+	function launchStoreTrack(){
+		var trackID = document.getElementById('trackID').innerText;
+		var trackName = document.getElementById('trackName').value;
+		var trackType = document.getElementById('trackType').value;
+		storeTrack(trackID, trackName,trackType);
+	}
+	function editInformationTrack (trackID, trackName, trackType){
+		document.getElementById('trackName').value = trackName;
+		document.getElementById('trackType').hide();
+		document.getElementById('trackType').value = trackType;
+		document.getElementById('trackID').innerHTML = trackID;
+		document.getElementById('header').innerHTML = "Editing track";
+
+	}
+</script>

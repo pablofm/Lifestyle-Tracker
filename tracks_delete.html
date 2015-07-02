@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<div data-bb-type="screen" id="screen">
+	<div id="list" data-bb-type="image-list" data-bb-header-justify="left" data-bb-style="removebuttons" data-bb-images="none" data-role="listview" >
+		<div data-bb-type="header" id="list">Your Trackers</div>
+	</div>
+	<div data-bb-type="action-bar" data-bb-back-caption="My trackers"></div>		
+</div>
+<script type="text/javascript">
+	function appendTracksToBeRemoved(){
+		var tracks = Track.all();
+		tracks.list(null,
+			function (results) {
+				if(results.length > 0){
+					results.forEach(
+						function (r) {
+							var item = document.createElement('div');
+							item.setAttribute('id', r.id);
+							item.setAttribute('data-bb-type','item');
+							item.setAttribute('data-bb-title',r.name);
+							item.innerHTML = "Track type: "+r.type;
+							item.setAttribute('onbtnclick', 'removeTrack("'+r.id+'",false);'); 
+							document.getElementById('list').appendItem(item);
+						}
+					);
+				}
+				else{
+					var item = document.createElement('div');
+					item.setAttribute('data-bb-type','label');		
+					item.innerHTML = "No trackers to remove!";
+					document.getElementById('list').appendItem(item);
+				}
+			}
+		);
+	}
+
+	function hideTrackAfterRemove(trackID){
+		var list = document.getElementById('list');
+		var div = document.getElementById(trackID);
+		list.removeChild(div);
+		list.refresh();
+	}
+</script>

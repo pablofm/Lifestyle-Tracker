@@ -1,0 +1,423 @@
+<div data-bb-type="screen" data-bb-effect="slide-left">
+	<div id="trackID" style="display:none" ></div>
+	<div id="trackType" style="display:none" ></div>
+	<div id="trackName" style="display:none" ></div>
+	<div data-bb-type="action-bar" data-bb-back-caption="My trackers">
+		<div data-bb-type="action" data-bb-style="button" data-bb-img="static/images/ic_data.png" onclick="showData()">Data</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-img="static/images/statistics-chart.png" onclick="showGraphic()">Graphic</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_view_details.png" onclick="showStatistics()">Statistics</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_save.png" onclick="exportData(document.getElementById('trackID').innerText;)">Export data</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_save.png" onclick="">Export graphic</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_edit.png" onclick="editTrack()">Edit this tracker</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_delete.png" onclick="callRemoveTrack()">Remove this tracker</div>
+		<div data-bb-type="action" data-bb-style="button" data-bb-overflow="true" data-bb-img="static/images/ic_delete.png" onclick="callDeleteValues()">Remove values</div>
+	</div>	
+
+	
+	<div id="data">
+		<div data-bb-type="image-list" data-bb-header-justify="left" data-bb-style="addbuttons" data-bb-images="none" data-role="listview">
+			<div data-bb-type="header">Actions</div>
+			<div data-bb-type="item" onbtnclick="callAddData()" onclick="callAddData()" data-bb-title="Add data">Tap here to add a new value of this tracker</div>
+		</div>
+		<div id="track" data-bb-type="image-list" data-bb-header-justify="left" data-bb-style="arrowlist" data-bb-images="none" data-role="listview">
+			<div id="track-data" data-bb-type="header"></div>
+		</div>
+	</div>
+
+	<div id="graphic" style="display:none">
+		<!-- HERE GOES THE GRAPHIC! -->
+		<div id="graphdiv" style="padding: 30px" align="center">
+			<style>
+			svg text {
+				font: normal 30pt Arial;
+			}
+			</style>
+			<svg></svg>
+
+		</div>
+		<div id="labels" align="center"></div>
+	</div>
+	<div id="statistics" style="display:none">
+		<!-- HERE GOES THE STATISTICS!  -->
+		<script type="text/javascript">
+			// To the statistics.
+			var valuesNumber = new Array();
+			var valuesYesNo = new Array();
+			var valuesDate = new Array();
+			var valuesLine = new Array();
+			var valuesToGraphic = new Array();
+		</script>
+		<div id="statisticsNumber" style="display:none">
+			<table style="padding-left:20px; padding-right:20px;width:95%;">				
+				<tr> 
+					<td class="cell" colspan="2" align="center">Measures of central tendency<td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Median:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="median_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Mean:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="mean_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Geometric mean:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="geometricMean_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Mode:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="mode_N"><span></td>
+				</tr>
+				<tr> 
+					<td class="cell" style="padding-top:25px;" colspan="2" align="center">Shape and dispersion<td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Variance:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="variance_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Standard deviation:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="standarDeviation_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Absolute deviation:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="absoluteDeviation_N"><span></td>
+				</tr>
+				<tr> 
+					<td class="cell" style="padding-top:25px;" colspan="2" align="center">Values<td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Count:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="count_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Min:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="min_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Max:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="max_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Range:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="range_N"><span></td>
+				</tr>
+				<tr> 
+					<td class="cell" style="padding-top:25px;" colspan="2" align="center">Time<td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">First value:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="time_first_N"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Last value:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="time_last_N"><span></td>
+				</tr>
+			</table>
+		</div>
+		<div id="statisticsYesNo" style="display:none">
+			<table style="padding-left:30px; padding-right:30px;width:95%;">
+				<tr> 
+					<td class="cell" colspan="2" align="center">Values<td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Count:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="count_YN"><span></td>
+				</tr>
+				<tr> 
+					<td class="cell" style="padding-top:25px;" colspan="2" align="center">Time<td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">First value:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="time_first_YN"><span></td>
+				</tr>
+				<tr>	
+					<td class="cell" style="padding-top:7px;">Last value:</td>
+					<td class="cell" style="padding-top:7px;" align="right"><span style="font-weight: bold;" id="time_last_YN"><span></td>
+				</tr>
+			</table>
+		</div>
+	</div>	
+</div>
+
+<!-- SCRIPTS SECTION -->
+<script type="text/javascript">
+	window.onorientationchange = 
+		function() {
+			var trackType = document.getElementById('trackType').innerText;
+			generateGraphic(trackType);
+		};
+
+	// When a track is tapped. The interface call this method to populate the previous added values.
+	function appendValues(trackName, trackID, trackType){		
+		var values = Value.all().filter("track", '=' , trackID).order("date", false);
+		var i = 1;
+		values.list(null, 
+			function (results) {
+				if(results.length > 0){
+					results.forEach(
+						function (r){
+							var item = document.createElement('div');
+							item.setAttribute('data-bb-type','item');
+							item.setAttribute('data-bb-title',r.value);
+							item.innerHTML = "Date: "+ moment(r.date).format(localStorage.getItem("dateFormat"));
+							item.onclick = function() {bb.pushScreen('data.html', 'data', {'valueID': r.id, 'value_': r.value, 'valueDate': r.date, 'trackName': r.track.name, 'trackType': trackType});};
+							document.getElementById('track').appendItem(item);
+							valuesDate.push(r.date);
+							// TO POPULATE THE ARRAY NEEDED TO STATISTICS AND GRAPHIC
+							if (trackType == "Number"){
+								valuesNumber.push(parseFloat(r.value));
+								valuesLine.push({x: r.date.getTime(), y: parseFloat(r.value)});
+								var pair = new Array();
+								valuesToGraphic.push([r.date, parseFloat(r.value)]);
+								i = i+1;
+							}
+							if (trackType == "Yes/No"){
+								if (r.value == "Yes"){
+									valuesYesNo.push("YES");
+								}
+								else{
+									valuesYesNo.push("NO");	
+								}
+							}
+						}
+						);
+				}
+				else{
+					var item = document.createElement('div');
+					item.setAttribute('data-bb-type','label');		
+					item.innerHTML = "No data added...yet!";
+					document.getElementById('track').appendItem(item);
+				}
+				document.getElementById('track-data').innerHTML = "Track: "+trackName+" - Type: "+trackType;
+				document.getElementById('trackID').innerHTML = trackID;
+				document.getElementById('trackType').innerHTML = trackType;
+				document.getElementById('trackName').innerHTML = trackName;
+				generateGraphic(trackType);
+			}
+		);
+	}
+	// To pass the values of the track to be edited.
+	function editTrack(){
+		var trackID = document.getElementById('trackID').innerText;
+		var trackName = document.getElementById('trackName').innerText;
+		var trackType = document.getElementById('trackType').innerText;
+		bb.pushScreen('track_new.html', 'editTrack', {'trackID': trackID, 'trackType': trackType, 'trackName': trackName});
+	}
+	// To remove a full track of the system.
+	// The second parameter implies we are INSIDE the track window.
+	// If false implies we are OUTSIDE (We are removing from the main window).
+	function callRemoveTrack(){
+		var trackID = document.getElementById('trackID').innerText;
+		removeTrack(trackID,true);
+	}
+
+	function callAddData(){
+		var trackName = document.getElementById('trackName').innerText;
+		var trackType = document.getElementById('trackType').innerText;
+		bb.pushScreen('data_new.html', 'newData',{'trackName':  trackName, 'trackType': trackType});
+		
+	}
+	function callDeleteValues(){
+		var trackID = document.getElementById('trackID').innerText;
+		bb.pushScreen('data_delete.html', 'deleteValues', {'trackID': trackID});
+	}
+	function showGraphic(){
+		FlurryAgent.logEvent('Graphic');
+		document.getElementById('data').style.display="none";
+		document.getElementById('statistics').style.display="none";
+		document.getElementById('graphic').style.display="block";
+
+	}
+	function showStatistics(){
+		FlurryAgent.logEvent('Statistics');
+		statistics();
+		document.getElementById('data').style.display="none";
+		document.getElementById('graphic').style.display="none";
+		document.getElementById('statistics').style.display="block";
+	}
+	function showData(){
+		document.getElementById('statistics').style.display="none";
+		document.getElementById('graphic').style.display="none";
+		document.getElementById('data').style.display="block";
+	}
+
+	
+	function mode (x) {
+		var counts = {},
+		mode = [],
+		max = 0,
+		n = x.length,
+		i = -1,	
+		d,
+		k;
+		while (++i < n) {
+			k = counts.hasOwnProperty(d = x[i]) ? ++counts[d] : counts[d] = 1;
+			if (k === max) mode.push(d);
+			else if (k > max) {
+				max = k;
+				mode = [d];
+			}
+		}
+		if (mode.length === 1) return mode[0];
+	};
+	function timeBetweenTwoDates(major,minor){
+		seconds = Math.floor((major - (minor))/1000);
+		minutes = Math.floor(seconds/60);
+		hours = Math.floor(minutes/60);
+		days = Math.floor(hours/24);
+
+		hours = hours-(days*24);
+		minutes = minutes-(days*24*60)-(hours*60);
+		seconds = seconds-(days*24*60*60)-(hours*60*60)-(minutes*60);
+
+		return days + "Days, " + hours + "Hours, "+ minutes + "Minutes and " + seconds + "seconds";
+	}
+
+	function statistics(){
+		if (trackType.innerText == "Number"){
+			document.getElementById('median_N').innerText = parseFloat(ss.median(valuesNumber)).toFixed(2);
+			document.getElementById('mean_N').innerText = parseFloat(ss.mean(valuesNumber)).toFixed(2);
+			document.getElementById('geometricMean_N').innerText = parseFloat(ss.geometric_mean(valuesNumber)).toFixed(2);
+			document.getElementById('mode_N').innerText = mode(valuesNumber);
+			document.getElementById('variance_N').innerText = parseFloat(ss.variance(valuesNumber)).toFixed(2);
+			document.getElementById('standarDeviation_N').innerText = parseFloat(ss.standard_deviation(valuesNumber)).toFixed(2);
+			document.getElementById('absoluteDeviation_N').innerText = parseFloat(ss.median_absolute_deviation(valuesNumber)).toFixed(2);
+			document.getElementById('count_N').innerText =valuesNumber.length;
+			document.getElementById('min_N').innerText = parseFloat(ss.min(valuesNumber));
+			document.getElementById('max_N').innerText = parseFloat(ss.max(valuesNumber));
+			document.getElementById('range_N').innerText = parseFloat(ss.max(valuesNumber)-ss.min(valuesNumber)).toFixed(2);
+			document.getElementById('time_first_N').innerText = moment(valuesDate[valuesDate.length - 1]).format(localStorage.getItem("dateFormat"));
+			document.getElementById('time_last_N').innerText = moment(valuesDate[0]).format(localStorage.getItem("dateFormat"));
+			document.getElementById('statisticsNumber').style.display="block";
+			document.getElementById('statisticsYesNo').style.display="none";
+
+		}
+		if (trackType.innerText == "Yes/No"){
+			document.getElementById('count_YN').innerText = valuesYesNo.length;
+			document.getElementById('time_first_YN').innerText = moment(valuesDate[valuesDate.length - 1]).format(localStorage.getItem("dateFormat"));
+			document.getElementById('time_last_YN').innerText = moment(valuesDate[0]).format(localStorage.getItem("dateFormat"));
+
+			document.getElementById('statisticsNumber').style.display="none";
+			document.getElementById('statisticsYesNo').style.display="block";
+		}
+	}
+
+	function generateGraphic(trackType){
+		if(valuesNumber.length != 0 || valuesYesNo.length != 0){			
+			if(trackType == "Number"){
+				// // DEVICE
+				console.log("ON DEVICE");
+				var winW = screen.width*window.devicePixelRatio*0.88;
+				var winH = screen.height*window.devicePixelRatio*0.80;
+
+				// RIPPLE
+				//console.log("ON RIPPLE");
+				//var winW = screen.width*0.88;
+				//var winH = screen.height*0.80;
+
+
+				g = new Dygraph(
+					document.getElementById("graphdiv"),
+					valuesToGraphic.reduce(function(a,b){return ""+a+"\n"+b;}),
+					{	
+						labelsDiv: "labels",
+						drawPoints: true,
+						pointSize: 5 ,
+						labels: [ "Date", "Data" ],
+						animatedZooms: true,
+						title: "Double tap to zoom out",
+						strokeWidth: 5,
+						xRangePad: 10,
+						yRangePad: 10,
+						axisLabelFontSize: 20,
+						valueRange: [Math.min.apply(Math, valuesNumber), Math.max.apply(Math, valuesNumber)],
+						axes:{
+							x:{
+								valueFormatter: 
+									function(ms) {
+										return moment(ms).format(localStorage.getItem('dateFormat'));
+									}
+								},
+							y:{
+								pixelsPerLabel: Math.floor(winW/10),
+							}
+						}				
+					}
+				);
+				g.resize(winW, winH);
+			}
+			else{
+				yesnoGraphic();
+			}
+		}
+	}
+
+	function countElementInArray(element, array){
+		var i, count = 0;
+		for(i in array){
+			if(Object.prototype.hasOwnProperty.call(array, i)){
+				if(array[i] instanceof Array){
+					count += countElementInArray(element, array[i]);
+				}
+				else{
+					if(array[i] === element){
+						count++;
+					}
+				}
+			}
+		}
+		return count;
+	}
+
+	function yesnoGraphic(){
+		// DEVICE
+		console.log("ON DEVICE");
+		var winW = screen.width*window.devicePixelRatio*0.88;
+		var winH = screen.height*window.devicePixelRatio*0.80;
+
+		// RIPPLE
+		//console.log("ON RIPPLE");
+		//var winW = screen.width*0.88;
+		//var winH = screen.height*0.80;
+
+		function data() {
+			return [
+			{
+				key: "Cumulative Return",
+				values: [
+				{
+					"label": "Yes",
+					"value" : countElementInArray("YES",valuesYesNo)
+				}, 
+				{ 
+					"label": "No",
+					"value" : countElementInArray("NO",valuesYesNo)
+				}
+				]
+			}
+			];
+		}
+
+		nv.addGraph(
+			function() {
+				var chart = nv.models.pieChart()
+					.x(function(d) { return d.label })
+					.y(function(d) { return d.value })
+					.width(winW)
+					.height(winH)
+					.color(['#6E6E6E', '#0f688c'])
+					.showLabels(true)
+					.labelThreshold(.05);
+
+				d3.select("#graphdiv svg")
+					.datum(data())
+					.transition().duration(1200)
+					.attr('width', winW)
+					.attr('height', winH)
+					.call(chart);
+				return chart;
+			}
+		);
+	}
+</script>
